@@ -1,2 +1,2 @@
 # NewsPaper
-Django Models, Django Shell
+Django Models, Django Shell, Django app
