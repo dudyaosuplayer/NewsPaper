@@ -1,0 +1,190 @@
+1.Создать двух пользователей (с помощью метода User.objects.create_user).
+
+from django.contrib.auth.models import User
+from publication.models import Author, Post, Comment, Category, PostCategory
+
+user_1 = User.objects.create(username='user_1') 
+user_2 = User.objects.create(username='user_2')
+
+2.Создать два объекта модели Author, связанные с пользователями.
+
+auhtor_1 = Author.objects.create(user=user_1, user_rate=0) 
+auhtor_2 = Author.objects.create(user=user_2, user_rate=0) 
+
+3.Добавить 4 категории в модель Category.
+
+cybersport = Category.objects.create(category_name='Киберспорт') 
+programing = Category.objects.create(category_name='Программирование') 
+ibs = Category.objects.create(category_name='Информационная безопасность')
+neural_networks = Category.objects.create(category_name='Нейронные сети')
+
+4.Добавить 2 статьи и 1 новость.
+
+article_1 = Post.objects.create(author=auhtor_1, choice=Post.article, header='dsfafasdfdsafadsfdsafasdfdsf', text='вафыафавыавыаафыаываываывавыавыавыавыаавыфафвыафваыафавыафафыа') 
+article_2 = Post.objects.create(author=auhtor_2, choice=Post.article, header='dsfafasdfdsafaВААВАВАВЫАВЫАВАВЫА', text='вафыафавыавыаафыаываываывавыавыавASDASDSADASDASDSADSADASDASDA
+SDSAaSDSA')
+news_1 = Post.objects.create(author=auhtor_1, choice=Post.news, header='dsfafadsfasdfASDASDasfasdfADSAfaВААВАВАВЫАВЫАВАВЫА', text='вафыафавыавыаафыаываsadfsdfASDASDSAasDSDSADвыавAS
+DASDSADASDASDSADSADASDASDASDSAaSDSA')
+
+5.Присвоить им категории (как минимум в одной статье/новости должно быть не меньше 2 категорий).
+
+article_1.category.add(cybersport, ibs) 
+article_2.category.add(programing, neural_networks) 
+news_1.category.add(programing, neural_networks, ibs) 
+
+6.Создать как минимум 4 комментария к разным объектам модели Post (в каждом объекте должен быть как минимум один комментарий).
+
+comment_1 = Comment.objects.create(post=article_1, user=user_1, comment_text='Comment 1 to article_1') 
+comment_2 = Comment.objects.create(post=article_1, user=user_2, comment_text='Comment 2 to article_1 from user_2') 
+comment_3 = Comment.objects.create(post=article_2, user=user_2, comment_text='Comment 3 to article_2 from user_2') 
+comment_4 = Comment.objects.create(post=news_1, user=user_1, comment_text='Comment 3 to news_1 from user_1') 
+  
+7.Применяя функции like() и dislike() к статьям/новостям и комментариям, скорректировать рейтинги этих объектов.
+
+>>> article_1.like()
+>>> article_1.like()
+>>> article_1.like()
+>>> article_1.like()
+>>> article_1.like()
+>>> article_1.like()
+>>> article_1.dislike() 
+>>> article_1.rate     
+5
+>>> article_2.rate 
+0
+>>> article_2.like()
+>>> article_2.like()
+>>> article_2.like()
+>>> article_2.dislike()  
+>>> article_2.dislike()
+>>> article_2.rate      
+1
+>>> news_1.like()       
+>>> news_1.like()
+>>> news_1.like()
+>>> news_1.like()
+>>> news_1.like()
+>>> news_1.like()
+>>> news_1.like()
+>>> news_1.like()
+>>> news_1.rate  
+8
+>>> news_1.like()
+>>> news_1.like()
+>>> news_1.like()
+>>> news_1.like()
+>>> news_1.rate    
+12
+>>> news_1.dislike() 
+>>> news_1.dislike()
+>>> news_1.rate      
+10
+>>> comment_1.comment_rate
+0
+>>> comment_1.like()      
+>>> comment_1.comment_rate
+1
+>>> comment_1.like()       
+>>> comment_1.like()
+>>> comment_1.like()
+>>> comment_1.like()
+>>> comment_1.comment_rate
+5
+>>> comment_1.dislike()    
+>>> comment_1.dislike()
+>>> comment_1.dislike()    
+>>> comment_1.dislike()
+>>> comment_1.comment_rate
+1
+>>> comment_1.dislike()    
+>>> comment_1.dislike() 
+>>> comment_1.comment_rate
+-1
+>>> comment_2.comment_rate 
+0
+>>> comment_2.like()       
+>>> comment_2.like()
+>>> comment_2.like()
+>>> comment_2.like()
+>>> comment_2.like()
+>>> comment_2.like()
+>>> comment_2.like()
+>>> comment_2.comment_rate
+7
+>>> comment_2.dislike()    
+>>> comment_2.comment_rate
+6
+>>> comment_3.comment_rate 
+0
+>>> comment_3.like()       
+>>> comment_3.like()
+>>> comment_3.like()
+>>> comment_3.dislike() 
+>>> comment_3.comment_rate
+2
+>>> comment_4.comment_rate 
+0
+>>> comment_4.like()       
+>>> comment_4.like()
+>>> comment_4.like()
+>>> comment_4.like()
+>>> comment_4.like()
+>>> comment_4.comment_rate
+5
+
+8.Обновить рейтинги пользователей.
+
+author_1.update_rating()
+author_1.user_rate       
+59
+news_1.like()
+news_1.rate   
+11
+author_1.update_rating()             
+author_1.user_rate       
+62
+comment_1.comment_rate                                    
+-1
+comment_1.like()      
+comment_1.comment_rate
+0
+author_1.update_rating() 
+author_1.user_rate      
+64
+
+
+
+author_2.update_rating()
+author_2.user_rate       
+13
+
+9.Вывести username и рейтинг лучшего пользователя (применяя сортировку и возвращая поля первого объекта).
+
+Author.objects.all().order_by('-user_rate').values('user__username', 'user_rate').first()  
+{'user__username': 'user_1', 'user_rate': 64}
+
+10.Вывести дату добавления, username автора, рейтинг, заголовок и превью лучшей статьи, основываясь на лайках/дислайках к этой статье.
+
+Post.objects.all().order_by('-rate').values('time_create', 'author__user__username', 'rate', 'header').first()                   
+{'time_create': datetime.datetime(2023, 6, 10, 8, 11, 1, 967494, tzinfo=datetime.timezone.utc), 'author__user__username': 'user_1', 'rate': 11, 'header': 'dsfafadsfasdfASDASDasfasdfADS
+AfaВААВАВАВЫАВЫАВАВЫА'}
+
+best_post = Post.objects.all().order_by('-rate').values('time_create', 'author__user__username', 'rate', 'header').first() 
+best_post.preview()
+'вафыафавыавыаафыаываsadfsdfASDASDSAasDSDSADвыавASDASDSADASDASDSADSADASDASDASDSAaSDSA...'
+
+11.Вывести все комментарии (дата, пользователь, рейтинг, текст) к этой статье.
+
+Comment.objects.filter(post=best_post).values('comment_date', 'user__username', 'comment_rate', 'comment_text')
+
+<QuerySet [{'comment_date': datetime.datetime(2023, 6, 10, 8, 27, 11, 672723, tzinfo=datetime.timezone.utc), 'user__username': 'user_1', 'comment_rate': 5, 'comment_text': 'Comment 3 t
+o news_1 from user_1'}]>
+
+
+
+
+
+
+
+
+
