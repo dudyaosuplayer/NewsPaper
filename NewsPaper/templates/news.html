@@ -1,0 +1,30 @@
+<!--  наследуемся от шаблона default.html, который мы создавали ещё во времена flatpages -->
+{% extends 'flatpages/default.html' %}
+
+{% load custom_filters %}
+
+
+{% block title %}
+News
+{% endblock title %}
+
+
+{% block content %}
+    <h1>Все новости</h1>
+    <h1>Кол-во: {{ posts|length }}</h1>
+    {% if posts %}
+        {% for post in posts %}
+            <h2>
+                {{ post.header|censor }}
+            </h2>
+            <h2>
+                {{ post.time_create|date:'j l M Y f' }}
+            </h2>
+            <p>
+                {{ post.text|truncatewords:50|censor }}
+            </p>
+        {% endfor %}
+    {% else %}
+        <h2>Новостей нет!</h2>
+    {% endif %}
+{% endblock content %}
