@@ -10,7 +10,11 @@ News
 <!-- В контенте на странице мы выводим сам товар, айди которого было передано в адрес -->
 {% block content %}
     <h2>
-        {{ post.header|censor }}
+        <a href="{% url 'news_detail' post.id %}" style="text-decoration: none; color: inherit;">{{ post.header|censor }}</a>
+        <br><!-- При нажатии на имя товара в таблцие нас теперь будет перекидывать на страницу с самого товара -->
+        <a href="{% url 'news_update' post.id %}" style="text-decoration: none; color: inherit;"><u>Редактировать</u></a> <!-- добавим ссылку на редактирование товара-->
+
+        <a href="{% url 'news_delete' post.id %}" style="text-decoration: none; color: inherit;"><u> Удалить </u></a> <!-- добавим ссылку на удаление товара-->
     </h2>
     <h2>
         {{ post.time_create|date:'j l M Y f' }}

@@ -11,25 +11,34 @@ News
 
 {% block content %}
     <h1>Все новости</h1>
-    <h1>Кол-во: {{ posts|length }}</h1>
+    <h1>Кол-во на странице: {{ posts|length }}</h1>
     {% if posts %}
         {% for post in posts %}
             <h2>
-                {{ post.header|censor }}
+                <a href="{% url 'news_detail' post.id %}" style="text-decoration: none; color: inherit;">{{ post.header|censor }}</a>
+                <br>
+                <a href="{% url 'news_update' post.id %}" style="text-decoration: none; color: inherit;"><u>Редактировать</u></a>
+
+                <a href="{% url 'news_delete' post.id %}" style="text-decoration: none; color: inherit;"><u> Удалить </u></a>
             </h2>
             <h2>
-                {{ post.time_create|date:'j l M Y f' }}
+                {{ post.time_create|date:'j.m.Y f' }}
             </h2>
             <p>
                 {{ post.text|truncatewords:50|censor }}
             </p>
         {% endfor %}
+
+        <h3>
+            <a href="{% url 'news_create' %}" style="text-decoration: none; color: inherit;"><u>Добавить новую публикацию</u></a>
+        </h3>
+        <br>
         {% if is_paginated %}
 
             <!-- Если доступна предыдущая страница, то даём ссылку на неё и самую первую страницу -->
             {% if page_obj.has_previous %}
-                <a href="?page=1">First</a>
-                <a href="?page={{ page_obj.previous_page_number }}"><<<</a>
+                <a href="?page=1" style="text-decoration: none; color: inherit;">Первая</a>
+                <a href="?page={{ page_obj.previous_page_number }}" style="text-decoration: none; color: inherit;"><<<</a>
             {% endif %}
 
             <!-- Показываем только текущую страницу и ближайшие к ней, чтобы список не тянулся и не захламлял страницу -->
@@ -37,14 +46,14 @@ News
                 {% if page_obj.number == num %}
                     <a>{{ num }}</a>
                 {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                    <a href="?page={{ num }}">{{ num }}</a>
+                    <a href="?page={{ num }}" style="text-decoration: none; color: inherit;">{{ num }}</a>
                 {% endif %}
             {% endfor %}
 
             <!-- Если есть следующая страница, то даём ссылку на неё и на самую последнюю страницу -->
             {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}">>>></a>
-                <a href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+                <a href="?page={{ page_obj.next_page_number }}" style="text-decoration: none; color: inherit;"> >>></a>
+                <a href="?page={{ page_obj.paginator.num_pages }}" style="text-decoration: none; color: inherit;">Последняя</a>
             {% endif %}
 
         {% endif %}

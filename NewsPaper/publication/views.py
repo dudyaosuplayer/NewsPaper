@@ -1,6 +1,7 @@
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Author, Category, Post, PostCategory, Comment
 from .filters import PostFilter
+from .forms import PostForm
 
 
 class PostsList(ListView):
@@ -29,3 +30,22 @@ class PostSearch(ListView):
         context['filter'] = PostFilter(self.request.GET, queryset=self.get_queryset())
         return context
 
+
+class PostCreate(CreateView):
+    template_name = 'add.html'
+    form_class = PostForm
+
+
+class PostUpdate(UpdateView):
+    template_name = 'add.html'
+    form_class = PostForm
+
+    def get_object(self, **kwargs):
+        id = self.kwargs.get('pk')
+        return Post.objects.get(pk=id)
+
+
+class PostDelete(DeleteView):
+    template_name = 'delete.html'
+    queryset = Post.objects.all()
+    success_url = '/news/'
