@@ -1,4 +1,4 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Author, Category, Post, PostCategory, Comment
 from .filters import PostFilter
@@ -32,14 +32,16 @@ class PostSearch(ListView):
         return context
 
 
-class PostCreate(CreateView):
+class PostCreate(PermissionRequiredMixin, CreateView):
     template_name = 'add.html'
     form_class = PostForm
+    permission_required = ('publication.add_post')
 
 
-class PostUpdate(LoginRequiredMixin, UpdateView):
+class PostUpdate(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
     template_name = 'add.html'
     form_class = PostForm
+    permission_required = ('publication.change_post')
 
     def get_object(self, **kwargs):
         id = self.kwargs.get('pk')
