@@ -15,6 +15,7 @@ News
         <a href="{% url 'news_update' post.id %}" style="text-decoration: none; color: inherit;"><u>Редактировать</u></a> <!-- добавим ссылку на редактирование товара-->
 
         <a href="{% url 'news_delete' post.id %}" style="text-decoration: none; color: inherit;"><u> Удалить </u></a> <!-- добавим ссылку на удаление товара-->
+        <h3> Категория: {{ post.category_name }} </h3>
     </h2>
     <h2>
         {{ post.time_create|date:'j l M Y f' }}

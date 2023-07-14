@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Появился новый пост в вашей категории</title>
+</head>
+<body>
+    <h1>Появился новый пост в вашей категории</h1>
+    <p> В категории: <i>{{category}}</i> разместили публикацию <strong> {{post.title}}</strong> </p>
+    <h1>
+        {{post.header}}
+    </h1>
+    <p>
+<!--        <a href = "">Перейти по ссылке</a>-->
+    </p>
+    <p>
+        {{post.text|truncatechars:100}}
+    </p>
+
+
+</body>
+</html>

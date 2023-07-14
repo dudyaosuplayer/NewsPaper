@@ -1,0 +1,50 @@
+<!--  наследуемся от шаблона default.html, который мы создавали ещё во времена flatpages -->
+{% extends 'flatpages/default.html' %}
+
+{% load custom_filters %}
+
+{% block title %}
+{{ category.category_name }}
+{% endblock title %}
+
+{% block content %}
+  <h1>
+    {{ category.category_name }} <small class="font-italic text-muted"> Подписчиков {{ subscribers.count }} </small>
+  </h1>
+   {% if is_subscribed %}
+        <div>
+            <em>
+                Отписаться от категории
+                <strong> {{ category.category_name }} ? </strong>
+            </em>
+                <a href = "{% url 'category_unsubscribe' category.id %}"> Отписаться!</a>
+                {% comment %} <a href = "{% url 'category_unsubscribe' category.category_name %}"> Отписаться!</a> {% endcomment %}
+        </div>
+        {% else %}
+        <div>
+            <em>
+                Подписаться на категорию
+                <strong> {{ category.category_name }} ? </strong>
+            </em>
+                <a href = "{% url 'category_subscribe' category.id %}" class="btn btn-primary" > Подписаться !</a>
+                {% comment %} <a href = "{% url 'category_subscribe' category.category_name %}" > Подписаться !</a> {% endcomment %}
+        </div>
+    {% endif %}
+    {% load custom_filters %}
+    {%  for post in category.post_set.all%}
+       <div class="row g-4 py-5 row-cols-1">
+                <div>
+                    <div>
+                        <h3 class="fs-2">{{ post.title }}</h3>
+                        <p><b>Дата публикации:{{ post.time_create | date:'d.m.y' }} <br> Автор {{ post.author }}</b></p>
+                        <p>{{ post.text|slice:"100"|safe }}</p>
+                        <a href="{% url 'news_detail' post.id %}" class="btn btn-primary btn-sm">
+                            Читать
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+    {% endfor %}
+
+{% endblock content %}
