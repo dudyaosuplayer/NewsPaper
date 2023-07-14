@@ -1,8 +1,14 @@
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.shortcuts import render, redirect
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Author, Category, Post, PostCategory, Comment
 from .filters import PostFilter
 from .forms import PostForm
+from django.core.mail import EmailMultiAlternatives, send_mail
+from static.config import DEFAULT_FROM_EMAIL
 
 
 class PostsList(ListView):
@@ -37,6 +43,43 @@ class PostCreate(PermissionRequiredMixin, CreateView):
     form_class = PostForm
     permission_required = ('publication.add_post')
 
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        if form.is_valid():
+            response = self.form_valid(form)
+            # Получение категории, к которой относится новость
+            category = form.cleaned_data['category'].get()
+            # Получение подписчиков категории
+            subscribers = category.subscribers.all()
+            # Отправка уведомлений подписчикам
+            for subscriber in subscribers:
+                email = subscriber.email
+                # Генерация HTML-сообщения из шаблона
+                html = render_to_string(
+                    'mailing/new_post_notification.html',
+                    {
+                        'category': category,
+                        # 'post': self,
+                    },
+                )
+
+                msg = EmailMultiAlternatives(
+                    subject=f'Здравствуй, {subscriber.username}. Новая статья в твоём любимом разделе!',
+                    body='',
+                    from_email=DEFAULT_FROM_EMAIL,
+                    to=[email, ],
+                )
+
+                msg.attach_alternative(html, 'text/html')
+                try:
+                    msg.send()
+                except Exception as e:
+                    print(e)
+
+            return redirect(request.META.get('HTTP_REFERER'))
+        else:
+            return self.form_invalid(form)
+
 
 class PostUpdate(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
     template_name = 'add.html'
@@ -52,3 +95,79 @@ class PostDelete(DeleteView):
     template_name = 'delete.html'
     queryset = Post.objects.all()
     success_url = '/news/'
+
+
+class NewsCategoryView(ListView):
+    model = Category
+    template_name = 'category/categories.html'
+    context_object_name = 'categories'
+    queryset = Category.objects.all()
+
+
+def CategoryDetailView(request, pk):
+    category = Category.objects.get(pk=pk)
+    is_subscribed = True if len(category.subscribers.filter(id=request.user.id)) else False
+
+    return render(
+        request,
+        'category/category.html',
+        {
+            'category': category,
+            'is_subscribed': is_subscribed,
+            'subscribers': category.subscribers.all()
+        }
+    )
+
+
+@login_required
+def UnsubscribeCategory(request, pk):
+    user = request.user
+    category = Category.objects.get(pk=pk)
+
+    category.subscribers.remove(request.user.id)
+    result = 'Unsubscribed'
+
+    return redirect(request.META.get('HTTP_REFERER'))
+
+
+@login_required
+def SubscribeCategory(request, pk):
+    user = request.user
+    category = Category.objects.get(pk=pk)
+
+    if not category.subscribers.filter(id=user.id).exists():
+        category.subscribers.add(user)
+        email = user.email
+        print(email)
+        html = render_to_string(
+            'mailing/subscribed_to_cat_notification.html',
+            {
+                'category': category,
+                'user': user,
+            },
+        )
+
+        msg = EmailMultiAlternatives(
+            subject=f'Подтверждение подписи на категорию - {category.category_name}',
+            body='',
+            from_email=DEFAULT_FROM_EMAIL,
+            to=[email, ],  # это то же, что и recipients_list - передаем коллекцию
+        )
+
+        msg.attach_alternative(html, 'text/html')
+        try:
+            msg.send()  # отсылаем
+        except Exception as e:
+            print(e)
+        redirect(request.META.get('HTTP_REFERER'))
+        # return redirect('')
+
+    return redirect(request.META.get('HTTP_REFERER'))
+
+
+class СategoryCreateView(CreateView):
+    model = Category
+    template_name = 'category/category_create.html'
+    fields = '__all__'
+    # form_class = PostForm
+    success_url = '/'

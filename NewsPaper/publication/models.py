@@ -20,9 +20,16 @@ class Author(models.Model):
 
         self.save()
 
+    def __str__(self):
+        return self.user.username
+
 
 class Category(models.Model):
     category_name = models.CharField(max_length=255, unique=True)
+    subscribers = models.ManyToManyField(User)
+
+    def __str__(self):
+        return self.category_name
 
 
 class Post(models.Model):

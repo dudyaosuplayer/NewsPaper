@@ -1,0 +1,26 @@
+<!--  наследуемся от шаблона default.html, который мы создавали ещё во времена flatpages -->
+{% extends 'flatpages/default.html' %}
+
+{% load custom_filters %}
+
+
+{% block title %}
+Categories
+{% endblock title %}
+
+
+{% block content %}
+    <div class="btn-toolbar justify-content-between border-bottom pb-2 mb-5">
+        <h1 class="post-title">Категории</h1>
+        <a href="{% url 'create_category' %}" class="btn btn-success d-flex align-items-center"> Добавить категорию</a>
+    </div>
+        {% for category in categories %}
+            <div>
+                <div>
+                    <h5>{{ category.category_name }}</h5>
+                    <p>Всего постов: {{ category.post_set.all.count }}</p>
+                    <a href = "{% url 'category' category.id %}">Ознакомиться</a>
+                </div>
+            </div>
+        {% endfor%}
+{% endblock content %}
