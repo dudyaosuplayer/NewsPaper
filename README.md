@@ -1,5 +1,4 @@
-# NewsPaper
-Django
+# NewsPaper(Django)
 You need to add NewsPaper/static/config.py file to deploy porject.
 config.py include 3 variables:
 1)DEFAULT_FROM_EMAIL = 'your_email_name@example.com'
