@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 import os
-from static.config import EMAIL_HOST_PASSWORD_PR, EMAIL_HOST_USER_PR
+from static.config import EMAIL_HOST_PASSWORD_PR, EMAIL_HOST_USER_PR, DEFAULT_FROM_EMAIL
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -153,7 +153,7 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_EMAIL_VERIFICATION = 'none'
+# ACCOUNT_EMAIL_VERIFICATION = 'none'
 SOCIALACCOUNT_QUERY_EMAIL = True
 
 ACCOUNT_FORMS = {'signup': 'sign.models.BasicSignupForm'}
@@ -165,3 +165,5 @@ EMAIL_HOST_USER = EMAIL_HOST_USER_PR  # ваше имя пользователя
 EMAIL_HOST_PASSWORD = EMAIL_HOST_PASSWORD_PR  # пароль от почты
 EMAIL_USE_SSL = True  # Яндекс использует ssl, подробнее о том, что это, почитайте на Википедии, но включать его здесь
 # обязательно
+DEFAULT_FROM_EMAIL = DEFAULT_FROM_EMAIL
+
