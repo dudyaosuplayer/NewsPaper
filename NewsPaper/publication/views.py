@@ -43,43 +43,6 @@ class PostCreate(PermissionRequiredMixin, CreateView):
     form_class = PostForm
     permission_required = ('publication.add_post')
 
-    # def post(self, request, *args, **kwargs):
-    #     form = self.get_form()
-    #     if form.is_valid():
-    #         response = self.form_valid(form)
-    #         # Получение категории, к которой относится новость
-    #         category = form.cleaned_data['category'].get()
-    #         # Получение подписчиков категории
-    #         subscribers = category.subscribers.all()
-    #         # Отправка уведомлений подписчикам
-    #         for subscriber in subscribers:
-    #             email = subscriber.email
-    #             # Генерация HTML-сообщения из шаблона
-    #             html = render_to_string(
-    #                 'mailing/new_post_notification.html',
-    #                 {
-    #                     'category': category,
-    #                     # 'post': self,
-    #                 },
-    #             )
-    #
-    #             msg = EmailMultiAlternatives(
-    #                 subject=f'Здравствуй, {subscriber.username}. Новая статья в твоём любимом разделе!',
-    #                 body='',
-    #                 from_email=DEFAULT_FROM_EMAIL,
-    #                 to=[email, ],
-    #             )
-    #
-    #             msg.attach_alternative(html, 'text/html')
-    #             try:
-    #                 msg.send()
-    #             except Exception as e:
-    #                 print(e)
-    #
-    #         return redirect(request.META.get('HTTP_REFERER'))
-    #     else:
-    #         return self.form_invalid(form)
-
 
 class PostUpdate(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
     template_name = 'add.html'
