@@ -87,8 +87,9 @@ def UnsubscribeCategory(request, pk):
     user = request.user
     category = Category.objects.get(pk=pk)
 
-    category.subscribers.remove(request.user.id)
-    result = 'Unsubscribed'
+    if category.subscribers.filter(id=user.id).exists():
+        category.subscribers.remove(request.user.id)
+        result = 'Unsubscribed'
 
     return redirect(request.META.get('HTTP_REFERER'))
 

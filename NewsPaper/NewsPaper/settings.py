@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 import os
-from static.config import EMAIL_HOST_PASSWORD_PR, EMAIL_HOST_USER_PR, DEFAULT_FROM_EMAIL
+from static.config import EMAIL_HOST_PASSWORD_PR, EMAIL_HOST_USER_PR, DEFAULT_FROM_EMAIL, SECRET_KEY_С, EMAIL_HOST_C
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,7 +25,7 @@ STATICFILES_DIRS = [
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-$xx!p2b(%gq##5rr1=fv65%u2p9^-x#m$hg)i^vat(rz1!1d1m'
+SECRET_KEY = SECRET_KEY_С
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -159,7 +159,7 @@ SOCIALACCOUNT_QUERY_EMAIL = True
 
 ACCOUNT_FORMS = {'signup': 'sign.models.BasicSignupForm'}
 
-EMAIL_HOST = 'smtp.yandex.ru'  # адрес сервера Яндекс-почты для всех один и тот же
+EMAIL_HOST = EMAIL_HOST_C  # адрес сервера Яндекс-почты для всех один и тот же
 EMAIL_PORT = 465  # порт smtp сервера тоже одинаковый
 EMAIL_HOST_USER = EMAIL_HOST_USER_PR  # ваше имя пользователя, например если ваша почта user@yandex.ru, то сюда надо
 # писать user, иными словами, это всё то что идёт до собаки
@@ -172,4 +172,7 @@ APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
 
 # если задача не выполняется за 25 секунд, то она автоматически снимается, можете поставить время побольше, но как правило, это сильно бьёт по производительности сервера
 APSCHEDULER_RUN_NOW_TIMEOUT = 25  # Seconds
+
+# if DEBUG:
+#     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 

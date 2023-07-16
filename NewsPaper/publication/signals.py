@@ -3,7 +3,7 @@ from django.template.loader import render_to_string
 from django.db.models.signals import post_save, m2m_changed
 from django.dispatch import receiver
 from .models import PostCategory, Post
-from static.config import DEFAULT_FROM_EMAIL
+from NewsPaper.settings import DEFAULT_FROM_EMAIL
 
 
 @receiver(m2m_changed, sender=Post.category.through)

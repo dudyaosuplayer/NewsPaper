@@ -21,7 +21,7 @@ def send_notification(subscriber, cat_obj):
     for category, posts in cat_obj.items():
         posts_info["category"] = category
         posts_info["posts"] = [compose_obj(post) for post in posts]
-    print(posts_info["posts"])
+    # print(posts_info["posts"])
 
     html = render_to_string(
         template_name=template,

@@ -33,7 +33,7 @@ class Command(BaseCommand):
         # добавляем работу нашему задачнику
         scheduler.add_job(
             my_job,
-            trigger=CronTrigger(minute="*/1"),
+            trigger=CronTrigger(second="*/30"),
             id="notify_subscribers",  # уникальный айди
             max_instances=1,
             replace_existing=True,
