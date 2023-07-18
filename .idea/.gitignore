@@ -3,3 +3,4 @@
 /workspace.xml
 .*
 !.gitignore
+__pycache__/
