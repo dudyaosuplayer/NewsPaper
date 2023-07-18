@@ -10,6 +10,7 @@ News Search
 
 
 {% block content %}
+
     <h1>Все новости</h1>
     <h1>Кол-во: {{ posts|length }}</h1>
     <form method="GET">
@@ -17,17 +18,20 @@ News Search
             <input type="submit" value="Найти">
     </form>
     {% if news_search %}
-        {% for post in filter.qs %}
-            <h2>
-                {{ post.header|censor }}
-            </h2>
-            <h2>
-                {{ post.time_create|date:'j l M Y f' }}
-            </h2>
-            <p>
-                {{ post.text|truncatewords:50|censor }}
-            </p>
-        {% endfor %}
+        {% load cache %}
+            {% cache 120 search %}
+                {% for post in filter.qs %}
+                    <h2>
+                        {{ post.header|censor }}
+                    </h2>
+                    <h2>
+                        {{ post.time_create|date:'j l M Y f' }}
+                    </h2>
+                    <p>
+                        {{ post.text|truncatewords:50|censor }}
+                    </p>
+                {% endfor %}
+            {% endcache %}
     {% else %}
         <h2>Новостей нет!</h2>
     {% endif %}
