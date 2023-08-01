@@ -1,3 +1,4 @@
 NewsPaper/static/config.py
 **/__pycache__/
 NewsPaper/cache_files
+/venv/
