@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 from static.config import EMAIL_HOST_PASSWORD_PR, EMAIL_HOST_USER_PR, DEFAULT_FROM_EMAIL, SECRET_KEY_С, EMAIL_HOST_C
 from pathlib import Path
+import logging
+from logging.handlers import TimedRotatingFileHandler
+from logging.handlers import SMTPHandler
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -183,4 +186,112 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
         'LOCATION': os.path.join(BASE_DIR, 'cache_files'), # Указываем, куда будем сохранять кэшируемые файлы! Не забываем создать папку cache_files внутри папки с manage.py!
     }
+}
+
+# Уровень логирования по умолчанию
+LOG_LEVEL = "DEBUG"  # Можно изменить на другой уровень, например "INFO", "WARNING", "ERROR", "CRITICAL"
+
+# Создаем главный логгер Django
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "simple": {
+            "format": "{asctime} {levelname} {message}",
+            "style": "{",
+        },
+        "detailed": {
+            "format": "{asctime} {levelname} {module} {message}",  # Формат вывода для обработчика general_file
+            "style": "{",  # Стиль форматирования, используем фигурные скобки
+        },
+        "detailed_error_critical": {
+            "format": "{asctime} {levelname} {message} {pathname}",
+            "style": "{",
+        },
+    },
+    "filters": {
+        "require_debug_true": {
+            "()": "django.utils.log.RequireDebugTrue",
+        },
+        "require_debug_false": {
+            "()": "django.utils.log.RequireDebugFalse",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "detailed_error_critical" if DEBUG else "simple",
+            "filters": ["require_debug_true"],  # Используем встроенный фильтр RequireDebugTrue
+            "level": "DEBUG",
+        },
+        "general_file": {
+            "class": "logging.handlers.TimedRotatingFileHandler",
+            "filename": os.path.join("logs", "general.log"),
+            "when": "midnight",
+            "backupCount": 30,
+            "formatter": "detailed",
+            "level": "INFO",  # Уровень обработчика для файла general.log
+            "filters": ["require_debug_false"],
+        },
+        "errors_file": {
+            "class": "logging.handlers.TimedRotatingFileHandler",
+            "filename": os.path.join("logs", "errors.log"),
+            "when": "midnight",
+            "backupCount": 30,
+            "formatter": "detailed",
+            "level": "ERROR",
+        },
+        "security_file": {
+            "class": "logging.handlers.TimedRotatingFileHandler",
+            "filename": os.path.join("logs", "security.log"),
+            "when": "midnight",
+            "backupCount": 30,
+            "formatter": "simple",
+            "level": "INFO",  # Уровень обработчика для файла security.log
+        },
+        "mail_admins": {
+            "class": "logging.handlers.SMTPHandler",
+            "formatter": "simple",
+            "mailhost": EMAIL_HOST_C,
+            "fromaddr": DEFAULT_FROM_EMAIL,
+            "toaddrs": [DEFAULT_FROM_EMAIL],
+            "subject": "Critical error occurred on the website",
+            "level": "ERROR",
+            "credentials": (None, EMAIL_HOST_PASSWORD_PR),
+            "filters": ["require_debug_false"],
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console", "general_file", "errors_file", "mail_admins"],
+            "level": LOG_LEVEL,
+            "propagate": False,
+            'exc_info': True,
+        },
+        "django.request": {
+            "handlers": ["console", "errors_file", "mail_admins"],
+            "level": "ERROR",
+            "propagate": False,
+        },
+        "django.server": {
+            "handlers": ["console", "errors_file", "mail_admins"],
+            "level": "ERROR",
+            "propagate": False,
+        },
+        "django.template": {
+            "handlers": ["console", "errors_file"],
+            "level": "ERROR",
+            "propagate": False,
+        },
+        "django.db.backends": {
+            "handlers": ["console", "errors_file"],
+            "level": "ERROR",
+            "propagate": False,
+        },
+        "django.security": {
+            "handlers": ["console", "security_file"],
+            "level": "INFO",
+            "propagate": False,
+        },
+    },
 }
